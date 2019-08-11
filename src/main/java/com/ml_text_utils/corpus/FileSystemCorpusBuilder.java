@@ -10,6 +10,9 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.ml_text_utils.utils.FileUtils.ensureFileExists;
+import static com.ml_text_utils.utils.FileUtils.ensureFileIsFolder;
+
 @SuppressWarnings("unused") public class FileSystemCorpusBuilder {
 
     private static final Pattern RETAIN_NUMBER_AND_ENGLISH_LETTERS = Pattern.compile("[^a-zA-Z0-9]");
@@ -47,8 +50,8 @@ import java.util.stream.Collectors;
 												 File corpusFolder,
 												 double trainingSetRate) {
 
-	if (!corpusFolder.exists()) throw new RuntimeException("corpus folder does not exists|folder|" + corpusFolder);
-	if (!corpusFolder.isDirectory()) throw new RuntimeException("corpus folder is actually not a folder|folder|" + corpusFolder);
+	ensureFileExists(corpusFolder);
+	ensureFileIsFolder(corpusFolder);
 
 	File trainingFolder = new File(corpusFolder + File.separator + TRAINING_FOLDER_NAME);
 	File testFolder = new File(corpusFolder + File.separator + TEST_FOLDER_NAME);

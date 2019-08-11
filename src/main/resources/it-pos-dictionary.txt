@@ -1,0 +1,108 @@
+B	adverb
+BN	negation adverb
+CC	coordinate conjunction
+CS	subordinate conjunction
+DD	demonstrative determiner
+DE	exclamative determiner
+DI	indefinite determiner
+DQ	interrogative determiner
+DR	relative determiner
+E	preposition
+EA	articulated preposition
+FB	balanced punctuation (round brackets, double quotes, etc.)
+FC	clause boundary punctuation (. - : ;)
+FF	comma, dash, omissis (, ... -)
+FS	sentence boundary punctuation (. ? ! ...)
+I	interjection
+N	cardinal number
+PC	clitic pronoun
+PD	demonstrative pronoun
+PE	personal pronoun
+PI	indefinite pronoun
+PP	possessive pronoun
+PQ	interrogative pronoun
+PR	relative pronoun
+RD	determinative article
+RI	indeterminative article
+T	predeterminer
+SA	abbreviation
+SP	proper noun
+XH	hashtag twitter (#nlp)
+XM	twitter mentions (@obama)
+XE	Emoticon (smiley :-))
+XX	Others (formula, , not classified words, other alphabetic symbols, etc.)
+
+Ss	singular noun 
+Sp	plural noun
+Sn	underspecified noun
+As	singular  adjective
+Ap	plural adjective
+An	underspecified adjective
+APs	singular possessive adjective
+APp	plural possessive adjective
+APn	underspecified possessive adjective
+NOs	singular ordinal number
+NOp	plural ordinal number
+NOn	underspecified ordinal number
+SWs	singular foreign name
+SWp	plural foreign name
+SWn	underspecified foreign name
+
+
+Vip	main verb indicative present, other than 3° person
+Vip3	main verb indicative present, 3° person
+Vii	main verb indicative imperfect, other than 3° person
+Vii3	main verb indicative imperfect, 3° person
+Vis	main verb indicative past, other than 3° person
+Vis3	main verb indicative past, 3° person
+Vif	main verb indicative future, other than 3° person
+Vif3	main verb indicative future, 3° person
+Vcp	main verb conjunctive present, other than 3° person
+Vcp3	main verb conjunctive present, 3° person
+Vci	main verb conjunctive imperfect, other than 3° person
+Vci3	main verb conjunctive imperfect, 3° person
+Vdp	main verb conditional present, other than 3° person
+Vdp3	main verb conditional present, 3° person
+Vg	main verb gerundive
+Vp	main verb participle
+Vf	main verb infinite
+Vm	main verb imperative
+
+VAip	auxiliary verb indicative present, other than 3° person
+VAip3	auxiliary verb indicative present, 3° person
+VAii	auxiliary verb indicative imperfect, other than 3° person
+VAii3	auxiliary verb indicative imperfect, 3° person
+VAis	auxiliary verb indicative past, other than 3° person
+Vis3	auxiliary verb indicative past, 3° person
+VAif	auxiliary verb indicative future, other than 3° person
+VAif3	auxiliary verb indicative future, 3° person
+VAcp	auxiliary verb conjunctive present, other than 3° person
+VAcp3	auxiliary verb conjunctive present, 3° person
+VAci	auxiliary verb conjunctive imperfect, other than 3° person
+VAci3	auxiliary verb conjunctive imperfect, 3° person
+VAdp	auxiliary verb conditional present, other than 3° person
+VAdp3	auxiliary verb conditional present, 3° person
+VAg	auxiliary verb gerundive
+VAp	auxiliary verb participle
+VAf	auxiliary verb infinite
+VAm	auxiliary verb imperative
+
+
+VMip	modal verb indicative present, other than 3° person
+VMip3	modal verb indicative present, 3° person
+VMii	modal verb indicative imperfect, other than 3° person
+VMii3	modal verb indicative imperfect, 3° person
+VMis	modal verb indicative past, other than 3° person
+VMis3	modal verb indicative past, 3° person
+VMif	modal verb indicative future, other than 3° person
+VMif3	modal verb indicative future, 3° person
+VMcp	modal verb conjunctive present, other than 3° person
+VMcp3	modal verb conjunctive present, 3° person
+VMci	modal verb conjunctive imperfect, other than 3° person
+VMci3	modal verb conjunctive imperfect, 3° person
+VMdp	modal verb conditional present, other than 3° person
+VMdp3	modal verb conditional present, 3° person
+VMg	modal verb gerundive
+VMp	modal verb participle
+VMf	modal verb infinite
+VMm	modal verb imperative
