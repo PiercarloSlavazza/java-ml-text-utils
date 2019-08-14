@@ -5,7 +5,7 @@
 
     <groupId>com.ml_text_utils</groupId>
     <artifactId>ml-text-utils</artifactId>
-<version>1.0.1</version>
+<version>1.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>ml-text-utils</name>
