@@ -126,8 +126,8 @@ import static com.ml_text_utils.utils.FileUtils.ensureFileIsFolder;
 
 	List<CorpusClassStatistics> corpusClassesStatistics = trainingDocumentsCountByClass.keySet().stream().
 			map(classLabel -> {
-			    Integer trainingDocuments = trainingDocumentsCountByClass.get(classLabel);
-			    Integer testDocuments = testDocumentsCountByClass.get(classLabel);
+			    Integer trainingDocuments = Optional.ofNullable(trainingDocumentsCountByClass.get(classLabel)).orElse(0);
+			    Integer testDocuments = Optional.ofNullable(testDocumentsCountByClass.get(classLabel)).orElse(0);
 			    return new CorpusClassStatistics(trainingDocuments, testDocuments, classLabel);
 			}).
 			sorted(Comparator.comparing(corpusClassStatistics -> corpusClassStatistics.getClassLabel().getName())).
