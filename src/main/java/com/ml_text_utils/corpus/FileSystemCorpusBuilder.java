@@ -108,6 +108,8 @@ import static com.ml_text_utils.utils.FileUtils.ensureFileIsFolder;
 	Map<ClassLabel, Integer> trainingDocumentsCountByClass = new HashMap<>();
 	Map<ClassLabel, Integer> testDocumentsCountByClass = new HashMap<>();
 
+	log.info("splitting|start");
+
 	textDocumentsStream.
 			streamTextDocuments().
 			forEach(textDocument -> {
@@ -124,7 +126,9 @@ import static com.ml_text_utils.utils.FileUtils.ensureFileIsFolder;
 			    writeUnchecked(documentPath, textDocument.getText());
 			});
 
-	List<CorpusClassStatistics> corpusClassesStatistics = trainingDocumentsCountByClass.keySet().stream().
+	Set<ClassLabel> classLabels = new HashSet<ClassLabel>(trainingDocumentsCountByClass.keySet());
+	classLabels.addAll(testDocumentsCountByClass.keySet());
+	List<CorpusClassStatistics> corpusClassesStatistics = classLabels.stream().
 			map(classLabel -> {
 			    Integer trainingDocuments = Optional.ofNullable(trainingDocumentsCountByClass.get(classLabel)).orElse(0);
 			    Integer testDocuments = Optional.ofNullable(testDocumentsCountByClass.get(classLabel)).orElse(0);
