@@ -6,19 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.stream.Stream;
 
-import static com.ml_text_utils.utils.FileUtils.ensureFileExists;
-import static com.ml_text_utils.utils.FileUtils.ensureFileIsFolder;
+import static com.ml_text_utils.utils.FileUtils.*;
 
 @SuppressWarnings("ConstantConditions") public class NLPCorpusPreprocesser {
 
     private final static Logger log = LoggerFactory.getLogger(NLPCorpusPreprocesser.class);
-
-    private static final FilenameFilter TEXT_FILENAME_FILTER = (dir, name) -> name.toLowerCase().endsWith(".txt");
 
     private final NLPPreprocessor nlpPreprocessor;
 
@@ -36,14 +30,6 @@ import static com.ml_text_utils.utils.FileUtils.ensureFileIsFolder;
 	} catch (IOException e) {
 	    throw new RuntimeException(e);
 	}
-    }
-
-    private Stream<File> streamTextFiles(File folder) {
-	return Arrays.stream(folder.listFiles(TEXT_FILENAME_FILTER));
-    }
-
-    private Stream<File> streamSubFolders(File folder) {
-	return Arrays.stream(folder.listFiles(File::isDirectory));
     }
 
     private void preprocessCorpusSubFolder(File corpusSubfolder, File preprocessedCorpusParentFolder) {

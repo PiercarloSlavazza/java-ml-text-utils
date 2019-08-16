@@ -21,8 +21,8 @@ import static com.ml_text_utils.utils.FileUtils.ensureFileIsFolder;
     private final static Logger log = LoggerFactory.getLogger(FileSystemCorpusBuilder.class);
 
     private static final Pattern RETAIN_NUMBER_AND_ENGLISH_LETTERS = Pattern.compile("[^a-zA-Z0-9]");
-    private static final String TRAINING_FOLDER_NAME = "training";
-    private static final String TEST_FOLDER_NAME = "test";
+    public static final String TRAINING_FOLDER_NAME = "training";
+    public static final String TEST_FOLDER_NAME = "test";
 
     private final Random random = new Random();
 
@@ -126,7 +126,7 @@ import static com.ml_text_utils.utils.FileUtils.ensureFileIsFolder;
 			    writeUnchecked(documentPath, textDocument.getText());
 			});
 
-	Set<ClassLabel> classLabels = new HashSet<ClassLabel>(trainingDocumentsCountByClass.keySet());
+	Set<ClassLabel> classLabels = new HashSet<>(trainingDocumentsCountByClass.keySet());
 	classLabels.addAll(testDocumentsCountByClass.keySet());
 	List<CorpusClassStatistics> corpusClassesStatistics = classLabels.stream().
 			map(classLabel -> {
