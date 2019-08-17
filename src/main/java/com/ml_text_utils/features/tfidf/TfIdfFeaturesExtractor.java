@@ -27,7 +27,10 @@ public class TfIdfFeaturesExtractor implements FeaturesExtractor {
     @Override public DocumentAsLabeledPoint extractFeaturesFromDocumentInCorpus(String documentId, String classLabel) {
 	Set<TfIdf> tfIdfs = corpusTermsStatistics.getTfIdfsForDocumentInCorpus(documentId);
 
-	double[] features = tfIdfs.stream().map(TfIdf::getTfIdf).mapToDouble(d -> d).toArray();
+	double[] features = tfIdfs.stream().
+			filter(tfIdf -> termsDictionary.getIndex(tfIdf.getTerm()).isPresent()).
+			map(TfIdf::getTfIdf).
+			mapToDouble(d -> d).toArray();
 
 	int[] indexes = tfIdfs.stream().map(TfIdf::getTerm).
 			map(termsDictionary::getIndex).
