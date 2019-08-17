@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ml_text_utils.features.tfidf.TermsDictionary;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.slf4j.Logger;
@@ -62,7 +63,16 @@ public class InMemoryLuceneTermsDictionary implements TermsDictionary {
 
 	AtomicInteger index = new AtomicInteger(0);
 	Map<String, Integer> dictionary = new HashMap<>();
-	terms.forEach(term -> dictionary.put(term, index.getAndIncrement()));
+	terms.stream().filter(term -> {
+	    try {
+		int numberOfDocumentWithTerm = indexReader.docFreq(new Term(DOC_CONTENT_FIELD, term));
+		boolean keepTerm = numberOfDocumentWithTerm > 2;
+		log.info("freq|" + term + "|" + numberOfDocumentWithTerm + "|keep|" + keepTerm);
+		return keepTerm;
+	    } catch (IOException e) {
+		throw new RuntimeException(e);
+	    }
+	}).forEach(term -> dictionary.put(term, index.getAndIncrement()));
 
 	log.info("building in memory dictionary|end");
 
