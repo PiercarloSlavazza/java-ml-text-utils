@@ -22,7 +22,13 @@ Namely it allows for:
         * parameters `--corpusFolderRoot <corpus_root>_preprocessed --luceneIndexFolder <corpus_root>_preprocessed_lucene`
     1. Export "Terms Dictionary" from Lucene Index
         * class `com.ml_text_utils.shell.JSONExportTermsDictionaryFromLuceneShell`
-        * parameters `--luceneIndexFolder <corpus_root>_preprocessed_lucene\ --termsDictionaryOutputJSONFile <corpus_root>_preprocessed_lucene_terms.json`
+        * parameters `--luceneIndexFolder <corpus_root>_preprocessed_lucene\ --termsDictionaryOutputJSONFile <corpus_root>_preprocessed_lucene_terms.json --maxTerms 10000`
+            * `--maxTerms` is optional
     1. Compute TfIdf and export to LibSVM
         * class `com.ml_text_utils.shell.FormatCorpusAsLibSVMShell`
         * parameters `--corpusFolderRoot <corpus_root>_preprocessed\ --libSVMExportFilePrefix <corpus_name> --libSVMExportFolder <libsvm_files_output_folder> --luceneIndexFolder <corpus_root>_preprocessed_lucene\ --termsDictionaryJSONFile <corpus_root>_preprocessed_lucene_terms.json`
+
+# Export to Google Cloud AutoML CSV
+
+* class `com.ml_text_utils.shell.ExportCorpusToGoogleAutoMLCSVShell`
+* parameters `--corpusFolderRoot <corpus_root> --googleAutoMlCsvFile <corpus>.csv --googleCloudStorageFolderUri gs://<your bucket>/<your folder path if any>`
