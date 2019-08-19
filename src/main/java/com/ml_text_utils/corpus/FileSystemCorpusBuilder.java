@@ -108,15 +108,51 @@ import static com.ml_text_utils.utils.FileUtils.ensureFileIsFolder;
 	    Long docsCount = docsCountPerClass.get(classLabel);
 	    Double classSamplingRate = corpusConstraints.getMaxDocsPerClass().
 			    map(maxDocsPerClass -> (double) maxDocsPerClass / (double) docsCount).
-			    filter(rate -> rate > 0d && rate >= 1d).
+			    filter(rate -> rate > 0d && rate <= 1d).
 			    orElse(1d);
 	    classSamplingRates.put(classLabel, classSamplingRate);
 	});
 
 	assert classSamplingRates.size() == docsCountPerClass.size();
-	assert classSamplingRates.values().stream().allMatch(rate ->  rate > 0 && rate >= 1d);
+	assert classSamplingRates.values().stream().allMatch(rate ->  rate > 0 && rate <= 1d);
 
 	return classSamplingRates;
+    }
+
+    private boolean isDocToBeSampled(TextDocument textDocument, Map<ClassLabel, Random> classSamplers, Map<ClassLabel, Double> classSamplingRates) {
+	ClassLabel classLabel = textDocument.getClassLabel();
+	Double randomDouble = classSamplers.get(classLabel).nextDouble();
+	Double classSamplingRate = classSamplingRates.get(classLabel);
+	boolean includedInSamples = randomDouble <= classSamplingRate;
+	if (classSamplingRate < 1d) log.debug(String.format("class|%s|rate|%f|random|%f|discarded|%b|doc id|%s",
+							    textDocument.getClassLabel(),
+							    classSamplingRate,
+							    randomDouble,
+							    !includedInSamples,
+							    textDocument.getId()));
+	return includedInSamples;
+    }
+
+    private CorpusClassStatistics computeClassStatistics(ClassLabel classLabel, Map<ClassLabel, Integer> trainingDocumentsCountByClass,
+							 Map<ClassLabel, Integer> testDocumentsCountByClass) {
+	Integer trainingDocuments = Optional.ofNullable(trainingDocumentsCountByClass.get(classLabel)).orElse(0);
+	Integer testDocuments = Optional.ofNullable(testDocumentsCountByClass.get(classLabel)).orElse(0);
+	return new CorpusClassStatistics(trainingDocuments, testDocuments, classLabel);
+    }
+
+    private void splitAndWriteToFileSystem(TextDocument textDocument, double trainingSetRate, File trainingFolder, File testFolder,
+					   Map<ClassLabel, Integer> trainingDocumentsCountByClass, Map<ClassLabel, Integer> testDocumentsCountByClass) {
+	boolean hasToBeTrainingDocument = hasToBeTrainingDocument(trainingSetRate);
+
+	String classLabelFolderName = normalizeAsFileSystemName(textDocument.getClassLabel().getName());
+	String documentFileName = normalizeAsFileSystemName(textDocument.getId()) + ".txt";
+	String documentClassSubPath = classLabelFolderName + File.separator + documentFileName;
+	File documentPath = new File((hasToBeTrainingDocument ? trainingFolder : testFolder) + File.separator + documentClassSubPath);
+
+	incrementDocumentCount(hasToBeTrainingDocument ? trainingDocumentsCountByClass : testDocumentsCountByClass,
+			       textDocument.getClassLabel());
+
+	writeUnchecked(documentPath, textDocument.getText());
     }
 
     @SuppressWarnings("unused") public CorpusStatistics buildCorpusBySplittingTrainingAndTestSet(TextDocumentsStream textDocumentsStream,
@@ -146,35 +182,15 @@ import static com.ml_text_utils.utils.FileUtils.ensureFileIsFolder;
 	Map<ClassLabel, Double> classSamplingRates = computeClassSamplingRates(docsCountPerClass, corpusConstraints);
 	Map<ClassLabel, Random> classSamplers = classSamplingRates.keySet().stream().collect(Collectors.toMap(Function.identity(), (x) -> new Random()));
 
-	textDocumentsStream.
-			streamTextDocuments().
+	textDocumentsStream.streamTextDocuments().
 			filter(textDocument -> !classesWithFewDocuments.contains(textDocument.getClassLabel())).
-			filter(textDocument -> {
-			   ClassLabel classLabel = textDocument.getClassLabel();
-			   return classSamplers.get(classLabel).nextDouble() <= classSamplingRates.get(classLabel);
-			}).
-			forEach(textDocument -> {
-			    boolean hasToBeTrainingDocument = hasToBeTrainingDocument(trainingSetRate);
-
-			    String classLabelFolderName = normalizeAsFileSystemName(textDocument.getClassLabel().getName());
-			    String documentFileName = normalizeAsFileSystemName(textDocument.getId()) + ".txt";
-			    String documentClassSubPath = classLabelFolderName + File.separator + documentFileName;
-			    File documentPath = new File((hasToBeTrainingDocument ? trainingFolder : testFolder) + File.separator + documentClassSubPath);
-
-			    incrementDocumentCount(hasToBeTrainingDocument ? trainingDocumentsCountByClass : testDocumentsCountByClass,
-						   textDocument.getClassLabel());
-
-			    writeUnchecked(documentPath, textDocument.getText());
-			});
+			filter(textDocument -> isDocToBeSampled(textDocument, classSamplers, classSamplingRates)).
+			forEach(textDocument -> splitAndWriteToFileSystem(textDocument, trainingSetRate, trainingFolder, testFolder, trainingDocumentsCountByClass, testDocumentsCountByClass));
 
 	Set<ClassLabel> classLabels = new HashSet<>(trainingDocumentsCountByClass.keySet());
 	classLabels.addAll(testDocumentsCountByClass.keySet());
 	List<CorpusClassStatistics> corpusClassesStatistics = classLabels.stream().
-			map(classLabel -> {
-			    Integer trainingDocuments = Optional.ofNullable(trainingDocumentsCountByClass.get(classLabel)).orElse(0);
-			    Integer testDocuments = Optional.ofNullable(testDocumentsCountByClass.get(classLabel)).orElse(0);
-			    return new CorpusClassStatistics(trainingDocuments, testDocuments, classLabel);
-			}).
+			map(classLabel -> computeClassStatistics(classLabel, trainingDocumentsCountByClass, testDocumentsCountByClass)).
 			sorted(Comparator.comparing(corpusClassStatistics -> corpusClassStatistics.getClassLabel().getName())).
 			collect(Collectors.toList());
 	List<ClassLabel> classesToBeExcluded = corpusClassesStatistics.
