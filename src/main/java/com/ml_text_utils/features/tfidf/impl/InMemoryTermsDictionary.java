@@ -7,22 +7,21 @@ import com.ml_text_utils.features.tfidf.TermsDictionary;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class InMemoryTermsDictionary implements TermsDictionary {
 
-    private Map<String, Integer> dictionary;
+    private Map<String, Integer> dictionary = new HashMap<>();
     private List<String> sortedTerms;
 
     @SuppressWarnings("unused") private InMemoryTermsDictionary() {}
 
-    InMemoryTermsDictionary(Map<String, Integer> dictionary) {
-	this.dictionary = dictionary;
-	this.sortedTerms = dictionary.keySet().stream().sorted().collect(Collectors.toList());
+    InMemoryTermsDictionary(Set<String> terms) {
+        sortedTerms = terms.stream().sorted().collect(Collectors.toList());
+	AtomicInteger termIndex = new AtomicInteger(0);
+	sortedTerms.forEach(term -> dictionary.put(term, termIndex.getAndIncrement()));
     }
 
     public static InMemoryTermsDictionary readFromJSONFile(File termsDictionaryJSONFile) {
@@ -31,6 +30,17 @@ public class InMemoryTermsDictionary implements TermsDictionary {
 	objectMapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
 	try {
 	    return objectMapper.readValue(termsDictionaryJSONFile, InMemoryTermsDictionary.class);
+	} catch (IOException e) {
+	    throw new RuntimeException(e);
+	}
+    }
+
+    public void serializeToJSON(File termsDictionaryJSONFile) {
+	ObjectMapper objectMapper = new ObjectMapper();
+	try {
+	    objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+	    objectMapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
+	    objectMapper.writerWithDefaultPrettyPrinter().writeValue(termsDictionaryJSONFile, this);
 	} catch (IOException e) {
 	    throw new RuntimeException(e);
 	}

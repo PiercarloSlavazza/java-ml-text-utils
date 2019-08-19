@@ -2,11 +2,13 @@ package com.ml_text_utils.shell;
 
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.Option;
-import com.ml_text_utils.features.tfidf.impl.InMemoryLuceneTermsDictionary;
+import com.ml_text_utils.features.tfidf.impl.InMemoryTermsDictionary;
+import com.ml_text_utils.features.tfidf.impl.LuceneTermsDictionaryExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Optional;
 
 interface ExportTermsDictionaryFromLuceneShellConfig {
 
@@ -15,6 +17,10 @@ interface ExportTermsDictionaryFromLuceneShellConfig {
 
     @Option
     File getTermsDictionaryOutputJSONFile();
+
+    @Option
+    Integer getMaxTerms();
+    @SuppressWarnings("unused") boolean isMaxTerms();
 }
 
 public class JSONExportTermsDictionaryFromLuceneShell {
@@ -26,8 +32,9 @@ public class JSONExportTermsDictionaryFromLuceneShell {
 	ExportTermsDictionaryFromLuceneShellConfig config = CliFactory.parseArguments(ExportTermsDictionaryFromLuceneShellConfig.class, args);
 	log.info("start|configs" + config.toString());
 
-	InMemoryLuceneTermsDictionary termsDictionary = new InMemoryLuceneTermsDictionary(config.getLuceneIndexFolder());
-	termsDictionary.serializeToJSON(config.getTermsDictionaryOutputJSONFile());
+	LuceneTermsDictionaryExtractor luceneTermsDictionaryExtractor = new LuceneTermsDictionaryExtractor();
+	InMemoryTermsDictionary inMemoryTermsDictionary = luceneTermsDictionaryExtractor.buildDictionary(config.getLuceneIndexFolder(), Optional.ofNullable(config.getMaxTerms()));
+	inMemoryTermsDictionary.serializeToJSON(config.getTermsDictionaryOutputJSONFile());
     }
 
 }
