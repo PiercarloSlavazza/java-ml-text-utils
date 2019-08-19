@@ -1,6 +1,7 @@
 package com.ml_text_utils.corpus;
 
 import com.ml_text_utils.ClassLabel;
+import com.ml_text_utils.TextDocument;
 import com.ml_text_utils.TextDocumentsStream;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -95,9 +97,32 @@ import static com.ml_text_utils.utils.FileUtils.ensureFileIsFolder;
 
     }
 
+    private Map<ClassLabel, Long> countDocsPerClasses(TextDocumentsStream textDocumentsStream) {
+	return textDocumentsStream.streamTextDocuments().map(TextDocument::getClassLabel).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+    }
+
+    private Map<ClassLabel, Double> computeClassSamplingRates(Map<ClassLabel, Long> docsCountPerClass, CorpusConstraints corpusConstraints) {
+	Map<ClassLabel, Double> classSamplingRates = new HashMap<>();
+
+	docsCountPerClass.keySet().forEach(classLabel -> {
+	    Long docsCount = docsCountPerClass.get(classLabel);
+	    Double classSamplingRate = corpusConstraints.getMaxDocsPerClass().
+			    map(maxDocsPerClass -> (double) maxDocsPerClass / (double) docsCount).
+			    filter(rate -> rate > 0d && rate >= 1d).
+			    orElse(1d);
+	    classSamplingRates.put(classLabel, classSamplingRate);
+	});
+
+	assert classSamplingRates.size() == docsCountPerClass.size();
+	assert classSamplingRates.values().stream().allMatch(rate ->  rate > 0 && rate >= 1d);
+
+	return classSamplingRates;
+    }
+
     @SuppressWarnings("unused") public CorpusStatistics buildCorpusBySplittingTrainingAndTestSet(TextDocumentsStream textDocumentsStream,
 												 File corpusFolder,
-												 double trainingSetRate) {
+												 double trainingSetRate,
+												 CorpusConstraints corpusConstraints) {
 
 	ensureFileExists(corpusFolder);
 	ensureFileIsFolder(corpusFolder);
@@ -110,8 +135,24 @@ import static com.ml_text_utils.utils.FileUtils.ensureFileIsFolder;
 
 	log.info("splitting|start");
 
+	log.info("counting docs per class|start");
+	Map<ClassLabel, Long> docsCountPerClass = countDocsPerClasses(textDocumentsStream);
+	log.info("counting docs per class|end");
+
+	Set<ClassLabel> classesWithFewDocuments = docsCountPerClass.keySet().
+			stream().
+			filter(classLabel -> docsCountPerClass.get(classLabel) < corpusConstraints.getMinDocsPerClass()).
+			collect(Collectors.toSet());
+	Map<ClassLabel, Double> classSamplingRates = computeClassSamplingRates(docsCountPerClass, corpusConstraints);
+	Map<ClassLabel, Random> classSamplers = classSamplingRates.keySet().stream().collect(Collectors.toMap(Function.identity(), (x) -> new Random()));
+
 	textDocumentsStream.
 			streamTextDocuments().
+			filter(textDocument -> !classesWithFewDocuments.contains(textDocument.getClassLabel())).
+			filter(textDocument -> {
+			   ClassLabel classLabel = textDocument.getClassLabel();
+			   return classSamplers.get(classLabel).nextDouble() <= classSamplingRates.get(classLabel);
+			}).
 			forEach(textDocument -> {
 			    boolean hasToBeTrainingDocument = hasToBeTrainingDocument(trainingSetRate);
 
