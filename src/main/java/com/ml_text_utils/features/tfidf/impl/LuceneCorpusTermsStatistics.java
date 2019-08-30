@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ class TermFrequency {
 
 public class LuceneCorpusTermsStatistics implements CorpusTermsStatistics {
 
-    @SuppressWarnings("unused") final static Logger log = LoggerFactory.getLogger(LuceneCorpusTermsStatistics.class);
+    @SuppressWarnings("unused") private final static Logger log = LoggerFactory.getLogger(LuceneCorpusTermsStatistics.class);
 
     private final static DefaultSimilarity DEFAULT_SIMILARITY = new DefaultSimilarity();
 
@@ -103,7 +104,10 @@ public class LuceneCorpusTermsStatistics implements CorpusTermsStatistics {
     private Set<TfIdf> getTfIdfs(Integer luceneDocId, IndexReader indexReader) {
 	try {
 	    TermFreqVector termsAndFrequencies = indexReader.getTermFreqVector(luceneDocId, DOC_CONTENT_FIELD);
-	    if (termsAndFrequencies == null) throw new RuntimeException("cannot get terms frequencies for doc|id|" + luceneDocId);
+	    if (termsAndFrequencies == null) {
+	        log.warn("cannot get terms frequencies for doc|id|" + luceneDocId);
+	        return Collections.emptySet();
+	    }
 
 	    int frequencies[] = termsAndFrequencies.getTermFrequencies();
 	    String[] terms = termsAndFrequencies.getTerms();
