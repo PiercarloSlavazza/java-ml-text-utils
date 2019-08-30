@@ -1,9 +1,3 @@
-/*
- Copyright (c) 2016 KIE srl.
- All rights reserved.
- http://www.kie-services.com
- mailto:info@kie-services.com
- */
 package com.ml_text_utils.utils;
 
 import java.io.*;
