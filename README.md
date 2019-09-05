@@ -8,7 +8,7 @@ Namely it allows for:
 * NLP preprocsssing the documents (tokenization, stemming, POS filtering...)
 * extracting features (e.g. TfIdf), and converting them to LibSVM file format
 
-This porject is featured in this [Medium essay](https://medium.com/@piercarlo_slavazza/what-is-the-best-method-for-automatic-text-classification).
+This project is featured in this [Medium essay](https://medium.com/@piercarlo_slavazza/what-is-the-best-method-for-automatic-text-classification).
 
 # Pipeline example
 
