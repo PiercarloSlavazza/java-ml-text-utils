@@ -10,6 +10,8 @@ Namely it allows for:
 
 This project is featured in this [Medium essay](https://medium.com/@piercarlo_slavazza/what-is-the-best-method-for-automatic-text-classification).
 
+WARNING: for the time being, this project _must not_ considered production ready due the lack of adequate automatic testing.
+
 # Pipeline example
 
 1. lay out the corpus into the file system
