@@ -19,7 +19,7 @@ package com.ml_text_utils.shell;
 
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.Option;
-import com.ml_text_utils.corpus.google_automl.GoogleAutoMLCSVExported;
+import com.ml_text_utils.corpus.google_automl.GoogleAutoMLCSVExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ public class ExportCorpusToGoogleAutoMLCSVShell {
 
 	assert !config.getGoogleCloudStorageFolderUri().endsWith("/");
 
-	new GoogleAutoMLCSVExported(config.getGoogleCloudStorageFolderUri()).exportCorpusToCSV(config.getCorpusFolderRoot(), config.getGoogleAutoMlCsvFile());
+	new GoogleAutoMLCSVExporter(config.getGoogleCloudStorageFolderUri()).exportCorpusToCSV(config.getCorpusFolderRoot(), config.getGoogleAutoMlCsvFile());
 
     }
 

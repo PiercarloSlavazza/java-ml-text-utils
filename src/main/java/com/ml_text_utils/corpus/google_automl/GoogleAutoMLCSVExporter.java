@@ -84,14 +84,14 @@ class GoogleAutoMLCSVRow {
     }
 }
 
-public class GoogleAutoMLCSVExported {
+public class GoogleAutoMLCSVExporter {
 
-    private final static Logger log = LoggerFactory.getLogger(GoogleAutoMLCSVExported.class);
+    private final static Logger log = LoggerFactory.getLogger(GoogleAutoMLCSVExporter.class);
 
     private final String googleCloudStorageFolderURI;
     private final Map<String, Random> validationSetSampler = new HashMap<>();
 
-    public GoogleAutoMLCSVExported(String googleCloudStorageFolderURI) {
+    public GoogleAutoMLCSVExporter(String googleCloudStorageFolderURI) {
 	this.googleCloudStorageFolderURI = googleCloudStorageFolderURI;
     }
 
