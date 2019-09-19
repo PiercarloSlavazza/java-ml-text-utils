@@ -19,6 +19,7 @@ package com.ml_text_utils.nlp.impl.italian;
 
 import com.ml_text_utils.nlp.NLPPreprocessor;
 import com.ml_text_utils.nlp.NLPPreprocessorFactory;
+import com.ml_text_utils.nlp.SentenceSplitter;
 import com.ml_text_utils.nlp.impl.NLPPreprocessorImpl;
 
 public class ItaNLPPreprocessorFactory implements NLPPreprocessorFactory {
@@ -34,5 +35,9 @@ public class ItaNLPPreprocessorFactory implements NLPPreprocessorFactory {
     @Override public NLPPreprocessor buildNLPPreprocessor() {
 
 	return new NLPPreprocessorImpl(itaOpenNLPSentenceSplitterFactory.buildSentenceSplitter(), itaTokenizerPipelineFactory.buildTokenizer());
+    }
+
+    @Override public SentenceSplitter buildSentenceSplitter() {
+	return itaOpenNLPSentenceSplitterFactory.buildSentenceSplitter();
     }
 }
