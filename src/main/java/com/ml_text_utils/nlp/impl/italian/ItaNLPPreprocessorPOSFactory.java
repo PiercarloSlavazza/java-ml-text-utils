@@ -24,17 +24,17 @@ import com.ml_text_utils.nlp.impl.NLPPreprocessorPOS;
 
 public class ItaNLPPreprocessorPOSFactory implements NLPPreprocessorFactory {
 
-    private final ItaTokenizerPipelineFactory itaTokenizerPipelineFactory;
     private ItaOpenNLPSentenceSplitterFactory itaOpenNLPSentenceSplitterFactory;
+    private ItaTokenizerWoPOSFilteringPipelineFactory itaTokenizerWoPOSFilteringPipelineFactory;
 
     public ItaNLPPreprocessorPOSFactory() {
 	itaOpenNLPSentenceSplitterFactory = new ItaOpenNLPSentenceSplitterFactory();
-	itaTokenizerPipelineFactory = new ItaTokenizerPipelineFactory();
+	itaTokenizerWoPOSFilteringPipelineFactory = new ItaTokenizerWoPOSFilteringPipelineFactory();
     }
 
     @Override public NLPPreprocessor buildNLPPreprocessor() {
 
-	return new NLPPreprocessorPOS(itaOpenNLPSentenceSplitterFactory.buildSentenceSplitter(), itaTokenizerPipelineFactory.buildTokenizer());
+	return new NLPPreprocessorPOS(itaOpenNLPSentenceSplitterFactory.buildSentenceSplitter(), itaTokenizerWoPOSFilteringPipelineFactory.buildTokenizer());
     }
 
     @Override public SentenceSplitter buildSentenceSplitter() {
