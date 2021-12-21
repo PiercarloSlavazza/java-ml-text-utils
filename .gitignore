@@ -4,3 +4,4 @@
 /dependency-reduced-pom.xml
 /log.txt
 *.iml
+.DS_Store
