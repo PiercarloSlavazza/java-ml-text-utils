@@ -19,7 +19,7 @@ package com.ml_text_utils.nlp;
 
 import java.util.Optional;
 
-public interface POSDictionary {
+@SuppressWarnings("unused") public interface POSDictionary {
 
     boolean isAdverb(Token token);
     boolean isArticulatedPreposition(Token token);
@@ -33,10 +33,12 @@ public interface POSDictionary {
     boolean isIndeterminativeArticle(Token token);
     boolean isModalVerb(Token token);
     boolean isNegationAdverb(Token token);
+    boolean isNumber(Token token);
     boolean isPersonalPronoun(Token token);
     boolean isPluralAdjective(Token token);
     boolean isPredeterminer(Token token);
     boolean isPreposition(Token token);
+    boolean isPronoun(Token token);
     boolean isProperNoun(Token token);
     boolean isPunctationComma(Token token);
     boolean isRelativePronoun(Token token);
